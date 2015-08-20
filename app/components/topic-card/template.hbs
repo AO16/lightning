@@ -34,7 +34,7 @@
 
 {{#if showMeetupDates}}
   <div class="meetup-dates-container">
-    <button class="link-btn" {{action "chooseTalkDate" today}}>
+    <button class="link-btn" {{action "chooseTalkDate" meetupDates.today}}>
       Today
     </button> or
     <button class="link-btn" {{action "chooseTalkDate" meetupDates.nextMeetup}}>
