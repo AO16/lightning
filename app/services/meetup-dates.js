@@ -34,4 +34,13 @@ export default Ember.Service.extend({
   thisMonthsMeetup: Ember.computed(function() {
     return getMeetupMomentByMonthOffset(0);
   }),
+  getMeetupDates({ start, end }) {
+    var meetupDates = [];
+
+    for (var offset = start; offset <= end; offset++) {
+      meetupDates.push(getMeetupMomentByMonthOffset(offset));
+    }
+
+    return meetupDates;
+  }
 });
