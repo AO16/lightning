@@ -3,10 +3,21 @@ import Ember from 'ember';
 export default Ember.Component.extend({
   topic: null,
   showMeetupDates: false,
+  meetupDateEnd: 1,
 
   session: Ember.inject.service(),
   meetupDates: Ember.inject.service(),
 
+  futureMeetupDates: Ember.computed('meetupDateEnd', function() {
+    var offset = 0;
+
+    if (this.get('meetupDates.isMonthsMeetupInPast')) offset + 1;
+
+    return this.get('meetupDates').getMeetupDates({
+      start: 0 + offset,
+      end: this.get('meetupDateEnd') + offset
+    });
+  }),
   isNew: Ember.computed('topic.submittedDate', 'meetupDates.previousMeetup', function() {
     var submittedDate = moment(this.get('topic.submittedDate'));
     var endOfPreviousMeetup = moment(this.get('meetupDates.previousMeetup')).endOf('day');
@@ -52,6 +63,9 @@ export default Ember.Component.extend({
     cancelTalkBy() {
       this.get('topic').setProperties({ talkBy: null, talkDate: null });
       this.get('topic').save();
+    },
+    addAnotherMeetupDate() {
+      this.incrementProperty('meetupDateEnd');
     }
   }
 });
