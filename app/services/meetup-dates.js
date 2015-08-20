@@ -11,20 +11,27 @@ function getMeetupMomentByMonthOffset(offset) {
 }
 
 export default Ember.Service.extend({
+  today: Ember.computed(function() {
+    return moment().startOf('day');
+  }),
   isMeetupToday: Ember.computed(function() {
-    var today = moment().startOf('day');
-    return getMeetupMomentByMonthOffset(0).isSame(today);
+    return getMeetupMomentByMonthOffset(0).isSame(this.get('today'));
+  }),
+  isMonthsMeetupInPast: Ember.computed(function() {
+    return this.get('thisMonthsMeetup').isBefore(this.get('today'));
+  }),
+  isMonthsMeetupInFuture: Ember.computed(function() {
+    return this.get('thisMonthsMeetup').isAfter(this.get('today'));
   }),
   previousMeetup: Ember.computed(function() {
-    var today = moment().startOf('day');
-    var thisMonthsMeetup = getMeetupMomentByMonthOffset(0);
-    var previousMeetup = thisMonthsMeetup.isBefore(today) ? thisMonthsMeetup : getMeetupMomentByMonthOffset(-1);
+    var previousMeetup = this.get('isMonthsMeetupInPast') ? this.get('thisMonthsMeetup') : getMeetupMomentByMonthOffset(-1);
     return previousMeetup.toDate();
   }),
   nextMeetup: Ember.computed(function() {
-    var today = moment().startOf('day');
-    var thisMonthsMeetup = getMeetupMomentByMonthOffset(0);
-    var nextMeetup = thisMonthsMeetup.isAfter(today) ? thisMonthsMeetup : getMeetupMomentByMonthOffset(1);
+    var nextMeetup = this.get('isMonthsMeetupInFuture') ? thisMonthsMeetup : getMeetupMomentByMonthOffset(1);
     return nextMeetup.toDate();
-  })
+  }),
+  thisMonthsMeetup: Ember.computed(function() {
+    return getMeetupMomentByMonthOffset(0);
+  }),
 });
